@@ -17,6 +17,8 @@ DEPENDS += "\
 
 RDEPENDS:${PN}-dev += "coreutils perl"
 
+# There are not branches for patch releases at the OpenDDS project.
+# fixing it with pointing to the minor release + pointing the SRC_REV to the commit of the release.
 # @see: https://github.com/objectcomputing/OpenDDS/issues/3031
 #DDS_SRC_BRANCH = "branch-DDS-${PV}"
 DDS_SRC_BRANCH = "branch-DDS-3.18"
@@ -28,9 +30,10 @@ DOC_TAO3_VERSION = "7.0.3"
 DOC_TAO3_VERSION_DIR = "${@d.getVar("DOC_TAO3_VERSION").replace('.','_')}"
 
 SRC_URI = "\
-	git://github.com/objectcomputing/OpenDDS.git;branch=${DDS_SRC_BRANCH};name=opendds \
-	https://github.com/DOCGroup/ACE_TAO/releases/download/ACE+TAO-${DOC_TAO3_VERSION_DIR}/ACE+TAO-${DOC_TAO3_VERSION}.tar.gz;name=doc_tao3;destsuffix=git, \
+        git://github.com/objectcomputing/OpenDDS.git;branch=${DDS_SRC_BRANCH};name=opendds \
+        https://github.com/DOCGroup/ACE_TAO/releases/download/ACE+TAO-${DOC_TAO3_VERSION_DIR}/ACE+TAO-${DOC_TAO3_VERSION}.tar.gz;name=doc_tao3;destsuffix=git, \
         file://dds_custom.mwc \
+        file://0001-Upgrade-to-ACE-7.0.4-and-TAO-3.0.4.patch \
 "
 
 UPSTREAM_CHECK_URI = "https://github.com/objectcomputing/OpenDDS/releases"
@@ -38,7 +41,6 @@ UPSTREAM_CHECK_URI = "https://github.com/objectcomputing/OpenDDS/releases"
 SRCREV_opendds = "5230a62e9d6524e86b52e64609e273f9dddeeed2"
 SRC_URI[doc_tao3.md5sum] = "6c20b17fea73c7574430b52c2fe459cf"
 SRC_URI[doc_tao3.sha256sum] = "597404c269e3c9688d1ff06d18c6166e4f95d84db5015e214bd38d8fa6ca4996"
-
 
 S = "${WORKDIR}/git"
 
@@ -135,7 +137,6 @@ do_install:append:class-native() {
     ln -sr ${D}${bindir}/ace_gperf ${D}${bindir}/DDS_HOST_ROOT/ACE_wrappers/bin/ace_gperf
     ln -sr ${D}${bindir}/tao_idl ${D}${bindir}/DDS_HOST_ROOT/ACE_wrappers/bin/tao_idl
 }
-
 
 do_install:append:class-nativesdk() {
     ln -sf ${bindir}/opendds_idl ${D}${datadir}/dds/bin/opendds_idl
