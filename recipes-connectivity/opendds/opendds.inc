@@ -9,8 +9,10 @@ inherit autotools
 SRC_URI += "${@bb.utils.contains('PACKAGECONFIG', 'ishapes', 'file://0001-adding-the-ishapes-demo.patch', '', d)}"
 
 PACKAGECONFIG ??= ""
+PACKAGECONFIG:append = " ${@bb.utils.filter('DISTRO_FEATURES', 'ipv6', d)}"
 
 PACKAGECONFIG[ishapes] = "--qt --qt-include=${STAGING_INCDIR},,qtbase"
+PACKAGECONFIG[ipv6] = "--ipv6,--no-ipv6,"
 
 DEPENDS += "\
     cmake-native \
