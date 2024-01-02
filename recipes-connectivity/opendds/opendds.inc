@@ -6,13 +6,17 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=11ee76f6fb51f69658b5bb8327c50b11"
 
 inherit autotools
 
-SRC_URI += "${@bb.utils.contains('PACKAGECONFIG', 'ishapes', 'file://0001-adding-the-ishapes-demo.patch', '', d)}"
+SRC_URI += "\
+    ${@bb.utils.contains('PACKAGECONFIG', 'ishapes', 'file://0001-adding-the-ishapes-demo.patch', '', d)} \
+    file://0002-fixing-DoAll-testing-DoAll.patch \
+"
 
-PACKAGECONFIG ??= ""
+PACKAGECONFIG ??= "tests"
 PACKAGECONFIG:append = " ${@bb.utils.filter('DISTRO_FEATURES', 'ipv6', d)}"
 
 PACKAGECONFIG[ishapes] = "--qt --qt-include=${STAGING_INCDIR},,qtbase"
 PACKAGECONFIG[ipv6] = "--ipv6,--no-ipv6,"
+PACKAGECONFIG[tests] = "--tests --gtest=${STAGING_INCDIR}/..,--no-tests,googletest cmake,perl perl-module-env perl-module-lib perl-module-english perl-module-file-glob perl-module-file-copy perl-module-sys-hostname perl-module-file-spec-functions perl-module-findbin perl-module-cwd perl-module-filehandle perl-module-posix perl-module-file-temp perl-module-file-spec perl-module-scalar-util perl-module-findbin perl-module-getopt-long"
 
 DEPENDS += "\
     cmake-native \
@@ -103,20 +107,20 @@ do_install:append:class-target() {
     install -d ${D}${datadir}/dds/dds/idl
     cp ${S}/dds/idl/IDLTemplate.txt ${D}${datadir}/dds/dds/idl
 
-#    install -d ${D}${libdir}
-#    install -m 0755 ${S}/*.so ${D}${libdir} 
-#    for shared_lib in ${D}${libdir}/*.so.*; do
-#        if [ -f $shared_lib ]; then
-#            baselib=$(basename $shared_lib)
-#            shortlib=$(echo $baselib | sed 's/.so.*//')
-#            extn=$(echo $baselib | sed -n 's/^[^.]*\.so//p')
-#            extn=$(echo $extn | sed 's/[^. 0-9]*//g')
-#            while [ -n "$extn" ]; do
-#                extn=$(echo $extn | sed 's/\.[^.]*$//')
-#                ln -sf $baselib ${D}${libdir}/$shortlib.so$extn
-#            done
-#        fi
-#    done
+    install -d ${D}${libdir}
+    #install -m 0755 ${S}/*.so ${D}${libdir} 
+    for shared_lib in ${D}${libdir}/*.so.*; do
+        if [ -f $shared_lib ]; then
+            baselib=$(basename $shared_lib)
+            shortlib=$(echo $baselib | sed 's/.so.*//')
+            extn=$(echo $baselib | sed -n 's/^[^.]*\.so//p')
+            extn=$(echo $extn | sed 's/[^. 0-9]*//g')
+            while [ -n "$extn" ]; do
+                extn=$(echo $extn | sed 's/\.[^.]*$//')
+                ln -sf $baselib ${D}${libdir}/$shortlib.so$extn
+            done
+        fi
+    done
 
     # Copy OpenDDS source tree folders to sysroot-destdir/usr/share/DDS_ROOT
     # to support building OpenDDS apps in their own layers
@@ -127,6 +131,7 @@ do_install:append:class-target() {
     cp -r ${DDS_ROOT}/tools ${D}${datadir}/DDS_ROOT
     cp -r ${DDS_ROOT}/cmake ${D}${datadir}/DDS_ROOT
     cp -r ${DDS_ROOT}/lib ${D}${datadir}/DDS_ROOT
+    cp -r ${DDS_ROOT}/performance-tests ${D}${datadir}/DDS_ROOT
     cp ${DDS_ROOT}/*.GNU ${D}${datadir}/DDS_ROOT
     cp ${DDS_ROOT}/*.txt ${D}${datadir}/DDS_ROOT
     cp -r ${DDS_ROOT}/ACE_wrappers/ace ${D}${datadir}/DDS_ROOT/ACE_wrappers
@@ -135,11 +140,21 @@ do_install:append:class-target() {
     cp -r ${DDS_ROOT}/ACE_wrappers/MPC ${D}${datadir}/DDS_ROOT/ACE_wrappers
     cp -r ${DDS_ROOT}/ACE_wrappers/TAO ${D}${datadir}/DDS_ROOT/ACE_wrappers
     cp -r ${DDS_ROOT}/ACE_wrappers/lib ${D}${datadir}/DDS_ROOT/ACE_wrappers
+    cp -r ${DDS_ROOT}/ACE_wrappers/ACEXML ${D}${datadir}/DDS_ROOT/ACE_wrappers
     cp ${DDS_ROOT}/ACE_wrappers/*.txt ${D}${datadir}/DDS_ROOT/ACE_wrappers
 
     if [ "${@bb.utils.contains("PACKAGECONFIG", "ishapes", "1", "0", d)}" = "1" ]; then
         install -d ${D}${bindir}
         install -m 0755 ${S}/examples/DCPS/ishapes/ishapes ${D}${bindir}/
+    fi
+    if [ "${@bb.utils.contains("PACKAGECONFIG", "tests", "1", "0", d)}" = "1" ]; then
+        install -d ${D}${bindir}
+        install -m 0755 ${S}/tests/auto_run_tests.pl ${D}${bindir}/
+        install -d ${D}${datadir}/DDS_ROOT/bin/
+        install -d ${D}${datadir}/DDS_ROOT/bin/PerlDDS
+        install -m 0755 ${S}/bin/PerlDDS/* ${D}${datadir}/DDS_ROOT/bin/PerlDDS/
+        install -d ${D}${datadir}/DDS_ROOT/tests
+        cp -r  ${S}/tests ${D}${datadir}/DDS_ROOT
     fi
 }
 
@@ -165,6 +180,7 @@ do_install:append:class-nativesdk() {
 }
 
 INSANE_SKIP:${PN} += "dev-so"
+INSANE_SKIP:${PN} += "libdir"
 
 PACKAGES += "${PN}-ishapes"
 
