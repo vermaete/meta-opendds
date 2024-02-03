@@ -1,0 +1,10 @@
+header:
+  version: 1
+
+bblayers_conf_header:
+  build_faster: |
+    DL_DIR = "/var/lib/yocto/downloads"
+    SSTATE_DIR = "/var/lib/yocto/sstate-cache"
+  pc: |
+    PARALLEL_MAKE = "-j 8"
+    BB_NUMBER_THREADS = "8"

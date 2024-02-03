@@ -1,0 +1,30 @@
+header:
+  version: 1
+
+target:
+  - core-image-minimal-xfce
+
+repos:
+  meta-openembedded:
+    url: http://git.openembedded.org/meta-openembedded
+    path: layers/meta-openembedded
+    branch: master
+    layers:
+      meta-gnome:
+      meta-multimedia:
+      meta-xfce:
+
+  meta-raspberrypi:
+    url: https://github.com/agherzan/meta-raspberrypi
+    path: layers/meta-raspberrypi
+    branch: master
+
+  meta-qt5:
+    url: https://github.com/meta-qt5/meta-qt5/
+    path: layers/meta-qt5
+    branch: master
+
+bblayers_conf_header:
+  ishapes: |
+    IMAGE_INSTALL:append = " opendds-ishapes"
+    PACKAGECONFIG:pn-opendds = " ishapes"

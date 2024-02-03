@@ -1,0 +1,58 @@
+header:
+  version: 1
+
+machine: raspberrypi4-64
+
+distro: poky
+
+repos:
+
+  meta-opendds:
+
+  poky:
+    url: https://git.yoctoproject.org/git/poky
+    path: layers/poky
+    branch: master
+    layers:
+      meta:
+      meta-poky:
+      meta-yocto-bsp:
+
+  meta-openembedded:
+    url: http://git.openembedded.org/meta-openembedded
+    path: layers/meta-openembedded
+    branch: master
+    layers:
+      meta-oe:
+      meta-python:
+      meta-networking:
+      meta-perl:
+
+bblayers_conf_header:
+  standard: |
+    POKY_BBLAYERS_CONF_VERSION = "2"
+    BBPATH = "${TOPDIR}"
+    BBFILES ?= ""
+
+local_conf_header:
+  standard: |
+    CONF_VERSION = "2"
+    PACKAGE_CLASSES = "package_rpm"
+    SDKMACHINE = "x86_64"
+    USER_CLASSES = "buildstats"
+    PATCHRESOLVE = "noop"
+  testing: |
+    INHERIT += "buildhistory"
+    BUILDHISTORY_COMMIT = "1"
+    DISTRO_FEATURES:remove = "ptest"
+    INHERIT += "cve-check"
+  rpi: |
+    DISTRO_FEATURES:append = " systemd usrmerge"
+    VIRTUAL-RUNTIME_init_manager = "systemd"
+    LICENSE_FLAGS_ACCEPTED = "synaptics-killswitch"
+    IMAGE_FEATURES:append = " ssh-server-openssh"
+    IMAGE_FEATURES:append = " allow-empty-password"
+    IMAGE_FEATURES:append = " allow-root-login"
+  opendds: |
+    IMAGE_INSTALL:append = " opendds"
+    ACE_TAO_OPTION = "--doc-group3"
