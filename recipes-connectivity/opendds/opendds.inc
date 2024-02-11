@@ -9,6 +9,7 @@ inherit autotools
 
 PACKAGECONFIG ??= ""
 PACKAGECONFIG[ishapes] = "--qt=${STAGING_DIR_NATIVE}${prefix_native} --qt-include=${STAGING_INCDIR},,qtbase qtbase-native"
+PACKAGECONFIG[doc-group3] = "--doc-group3,,"
 
 DEPENDS += "\
     cmake-native \
@@ -60,14 +61,13 @@ OECONF:append = "\
     --security \
     --openssl=${WORKDIR}/recipe-sysroot/usr \
     --xerces3=${WORKDIR}/recipe-sysroot/usr \
-    ${ACE_TAO_OPTION} \
+    ${PACKAGECONFIG_CONFARGS} \
 "
 
 OECONF:append:class-target = "\
     --host-tools=${STAGING_BINDIR_NATIVE}/DDS_HOST_ROOT \
     --target=linux-cross \
     --target-compiler=${S}/${HOST_PREFIX}g++ \
-    ${PACKAGECONFIG_CONFARGS} \
 "
 OECONF:append:class-native = "\
     --target=linux \
