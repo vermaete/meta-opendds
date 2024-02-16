@@ -5,11 +5,14 @@ BUGTRACKER = "https://github.com/OpenDDS/OpenDDS/issues"
 LICENSE = "OpenDDS"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=11ee76f6fb51f69658b5bb8327c50b11"
 
-inherit autotools
+inherit autotools ptest
 
-PACKAGECONFIG ??= ""
+SRC_URI:append = " file://run-ptest"
+
+PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'ptest', 'tests', '', d)}"
 PACKAGECONFIG[ishapes] = "--qt=${STAGING_DIR_NATIVE}${prefix_native} --qt-include=${STAGING_INCDIR},,qtbase qtbase-native"
 PACKAGECONFIG[doc-group3] = "--doc-group3,,"
+PACKAGECONFIG[tests] = "--tests --gtest=${WORKDIR}/recipe-sysroot/usr, --no-tests, googletest"
 
 DEPENDS += "\
     cmake-native \
@@ -25,6 +28,8 @@ RDEPENDS:${PN}-dev += "\
     make \
     perl \
 "
+
+RDEPENDS:${PN}-ptest += "perl"
 
 S = "${WORKDIR}/git"
 
@@ -56,7 +61,6 @@ OECONF ??= ""
 OECONF:append = "\
     --prefix=${prefix} \
     --verbose \
-    --no-tests \
     --no-rapidjson \
     --security \
     --openssl=${WORKDIR}/recipe-sysroot/usr \
@@ -143,6 +147,10 @@ do_install:append:class-nativesdk() {
     ln -sf ${bindir}/opendds_idl ${D}${datadir}/dds/bin/opendds_idl
     ln -sf ${bindir}/ace_gperf ${D}${datadir}/ace/bin/ace_gperf
     ln -sf ${bindir}/tao_idl ${D}${datadir}/ace/bin/tao_idl
+}
+
+do_install_ptest() {
+    install -m 0755 ${S}/test/auto_run_tests.pl ${D}${bindir}
 }
 
 PACKAGES += "${PN}-ishapes"
