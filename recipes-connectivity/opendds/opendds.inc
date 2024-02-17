@@ -10,6 +10,8 @@ inherit autotools ptest
 SRC_URI:append = " file://run-ptest"
 
 PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'ptest', 'tests', '', d)}"
+PACKAGECONFIG:class-native ??= ""
+
 PACKAGECONFIG[ishapes] = "--qt=${STAGING_DIR_NATIVE}${prefix_native} --qt-include=${STAGING_INCDIR},,qtbase qtbase-native"
 PACKAGECONFIG[doc-group3] = "--doc-group3,,"
 PACKAGECONFIG[tests] = "--tests --gtest=${WORKDIR}/recipe-sysroot/usr, --no-tests, googletest"
