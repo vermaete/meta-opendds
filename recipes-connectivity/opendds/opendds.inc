@@ -14,7 +14,7 @@ PACKAGECONFIG:class-native ??= ""
 
 PACKAGECONFIG[ishapes] = "--qt=${STAGING_DIR_NATIVE}${prefix_native} --qt-include=${STAGING_INCDIR},,qtbase qtbase-native"
 PACKAGECONFIG[doc-group3] = "--doc-group3,,"
-PACKAGECONFIG[tests] = "--tests --gtest=${WORKDIR}/recipe-sysroot/usr, --no-tests, googletest"
+PACKAGECONFIG[tests] = "--tests --gtest=${WORKDIR}/recipe-sysroot/usr, --no-tests, googletest, perl packagegroup-meta-perl perl-module-tie-array perl-module-english, , ishapes"
 
 DEPENDS += "\
     cmake-native \
@@ -30,8 +30,6 @@ RDEPENDS:${PN}-dev += "\
     make \
     perl \
 "
-
-RDEPENDS:${PN}-ptest += "perl"
 
 S = "${WORKDIR}/git"
 
@@ -152,7 +150,11 @@ do_install:append:class-nativesdk() {
 }
 
 do_install_ptest() {
-    install -m 0755 ${S}/test/auto_run_tests.pl ${D}${bindir}
+    install -m 0755 ${S}/tests/auto_run_tests.pl ${D}${bindir}
+    install -d ${D}/usr/lib/perl5/5.38.2/PerlACE
+    install -m 644 ${S}/ACE_wrappers/bin/PerlACE/* ${D}/usr/lib/perl5/5.38.2/PerlACE
+    install -d ${D}/usr/lib/perl5/5.38.2/PerlDDS
+    install -m 644 ${S}/ACE_wrappers/bin/PerlDDS/* ${D}/usr/lib/perl5/5.38.2/PerlDDS
 }
 
 PACKAGES += "${PN}-ishapes"
