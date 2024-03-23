@@ -150,11 +150,27 @@ do_install:append:class-nativesdk() {
 }
 
 do_install_ptest() {
-    install -m 0755 ${S}/tests/auto_run_tests.pl ${D}${bindir}
+    install -d ${D}${datadir}/DDS_ROOT/
+    install -d ${D}${datadir}/DDS_ROOT/tests
+    cd ${S}/tests
+    tar --no-same-owner \
+	--exclude='*.mpc'\
+	--exclude='*.o' \
+	--exclude='GNUmakefile*'\
+	--exclude='.gitignore'\
+	--exclude='.depend*'\
+	--exclude='.obj*'\
+	-cpf - . \
+        | tar --no-same-owner -xpf - -C ${D}${datadir}/DDS_ROOT/tests
+    # A symbolic link because the test script will search the execuables under DDS_ROOT.
+    # But because of the --prefix in the configure they are installed under /usr/bin
+    ln -s ${bindir} ${D}${datadir}/DDS_ROOT/bin
     install -d ${D}/usr/lib/perl5/5.38.2/PerlACE
-    install -m 644 ${S}/ACE_wrappers/bin/PerlACE/* ${D}/usr/lib/perl5/5.38.2/PerlACE
+    install -m 644 ${S}/ACE_wrappers/bin/PerlACE/*.pm ${D}/usr/lib/perl5/5.38.2/PerlACE
     install -d ${D}/usr/lib/perl5/5.38.2/PerlDDS
-    install -m 644 ${S}/ACE_wrappers/bin/PerlDDS/* ${D}/usr/lib/perl5/5.38.2/PerlDDS
+    install -m 644 ${S}/bin/PerlDDS/*.pm ${D}/usr/lib/perl5/5.38.2/PerlDDS
+    install -d ${D}${datadir}/DDS_ROOT/tools/scripts/modules
+    install -m 644 ${S}/tools/scripts/modules/*.pm ${D}${datadir}/DDS_ROOT/tools/scripts/modules
 }
 
 PACKAGES += "${PN}-ishapes"
@@ -164,6 +180,7 @@ INSANE_SKIP:${PN}-dev += "libdir"
 
 FILES:${PN}-dev += "${datadir}"
 FILES:${PN}-ishapes += "${bindir}/ishapes"
+FILES:${PN}-ptest += "${libdir}/perl5/5.38.2/PerlACE ${libdir}/perl5/5.38.2/PerlDDS"
 
 ALLOW_EMPTY:${PN}-ishapes = "1"
 
