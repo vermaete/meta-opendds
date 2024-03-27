@@ -9,9 +9,9 @@ inherit autotools ptest
 
 SRC_URI:append = " file://run-ptest"
 
-PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'ptest', 'tests', '', d)}"
+PACKAGECONFIG ??= "security ${@bb.utils.contains('DISTRO_FEATURES', 'ptest', 'tests', '', d)}"
 PACKAGECONFIG:class-native ??= ""
-
+PACKAGECONFIG[security] = "--security, , openssl xerces-c, "
 PACKAGECONFIG[ishapes] = "--qt=${STAGING_DIR_NATIVE}${prefix_native} --qt-include=${STAGING_INCDIR},,qtbase qtbase-native"
 PACKAGECONFIG[doc-group3] = "--doc-group3,,"
 PACKAGECONFIG[tests] = "--tests --gtest=${WORKDIR}/recipe-sysroot/usr, --no-tests, googletest, perl packagegroup-meta-perl perl-module-tie-array perl-module-english, , ishapes"
@@ -19,9 +19,7 @@ PACKAGECONFIG[tests] = "--tests --gtest=${WORKDIR}/recipe-sysroot/usr, --no-test
 DEPENDS += "\
     cmake-native \
     opendds-native \
-    openssl \
     perl-native \
-    xerces-c \
 "
 
 RDEPENDS:${PN}-dev += "\
@@ -62,9 +60,6 @@ OECONF:append = "\
     --prefix=${prefix} \
     --verbose \
     --no-rapidjson \
-    --security \
-    --openssl=${WORKDIR}/recipe-sysroot/usr \
-    --xerces3=${WORKDIR}/recipe-sysroot/usr \
     ${PACKAGECONFIG_CONFARGS} \
 "
 
@@ -72,13 +67,13 @@ OECONF:append:class-target = "\
     --host-tools=${STAGING_BINDIR_NATIVE}/DDS_HOST_ROOT \
     --target=linux-cross \
     --target-compiler=${S}/${HOST_PREFIX}g++ \
+    ${@bb.utils.contains('PACKAGECONFIG', 'security', '--openssl=${WORKDIR}/recipe-sysroot/usr', '', d)} \
+    ${@bb.utils.contains('PACKAGECONFIG', 'security', '--xerces3=${WORKDIR}/recipe-sysroot/usr', '', d)} \
 "
 OECONF:append:class-native = "\
     --target=linux \
     --host-tools-only \
-    --security \
-    --openssl=${WORKDIR}/recipe-sysroot-native/usr \
-    --xerces3=${WORKDIR}/recipe-sysroot-native/usr \
+    --no-security \
 "
 OECONF:append:class-nativesdk = "\
     --compiler=${S}/${HOST_PREFIX}g++ \
