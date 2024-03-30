@@ -145,6 +145,8 @@ do_install:append:class-nativesdk() {
 }
 
 do_install_ptest() {
+    sed -i "s#@PTEST_ARGS@#${@bb.utils.contains('PACKAGECONFIG', 'security', '--security', '', d)}#g" ${D}${PTEST_PATH}/run-ptest
+
     install -d ${D}${datadir}/DDS_ROOT/
     install -d ${D}${datadir}/DDS_ROOT/tests
     cd ${S}/tests
@@ -157,6 +159,17 @@ do_install_ptest() {
 	--exclude='.obj*'\
 	-cpf - . \
         | tar --no-same-owner -xpf - -C ${D}${datadir}/DDS_ROOT/tests
+    install -d ${D}${datadir}/DDS_ROOT/performance-tests
+    cd ${S}/performance-tests
+    tar --no-same-owner \
+	--exclude='*.mpc'\
+	--exclude='*.o' \
+	--exclude='GNUmakefile*'\
+	--exclude='.gitignore'\
+	--exclude='.depend*'\
+	--exclude='.obj*'\
+	-cpf - . \
+        | tar --no-same-owner -xpf - -C ${D}${datadir}/DDS_ROOT/performance-tests
     # A symbolic link because the test script will search the execuables under DDS_ROOT.
     # But because of the --prefix in the configure they are installed under /usr/bin
     ln -s ${bindir} ${D}${datadir}/DDS_ROOT/bin
