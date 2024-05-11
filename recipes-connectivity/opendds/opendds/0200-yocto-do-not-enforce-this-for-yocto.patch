@@ -1,0 +1,32 @@
+From 8de753dc12558400e5ed5ca7a560a04d1670346d Mon Sep 17 00:00:00 2001
+From: Jan Vermaete <jan.vermaete@gmail.com>
+Date: Sat, 11 May 2024 09:40:32 +0200
+Subject: [PATCH 200/200] yocto: do not enforce this for yocto
+
+Signed-off-by: Jan Vermaete <jan.vermaete@gmail.com>
+---
+ CMakeLists.txt | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e1a49d16ed..0794e0f41d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -23,10 +23,10 @@ endif()
+ set(OPENDDS_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "")
+ get_filename_component(_OPENDDS_SOURCE_DIR_REAL "${OPENDDS_SOURCE_DIR}" REALPATH)
+ get_filename_component(_OPENDDS_BUILD_DIR_REAL "${OPENDDS_BUILD_DIR}" REALPATH)
+-if("${_OPENDDS_SOURCE_DIR_REAL}" STREQUAL "${_OPENDDS_BUILD_DIR_REAL}")
+-  message(FATAL_ERROR "Please build OpenDDS in a different directory from the source tree "
+-    "directory. Use something like \"cmake -S . -B build\".")
+-endif()
++#if("${_OPENDDS_SOURCE_DIR_REAL}" STREQUAL "${_OPENDDS_BUILD_DIR_REAL}")
++#  message(FATAL_ERROR "Please build OpenDDS in a different directory from the source tree "
++#    "directory. Use something like \"cmake -S . -B build\".")
++#endif()
+ set(OPENDDS_BIN_DIR "${OPENDDS_BUILD_DIR}/bin" CACHE INTERNAL "")
+ set(OPENDDS_LIB_DIR "${OPENDDS_BUILD_DIR}/lib" CACHE INTERNAL "")
+ list(APPEND CMAKE_PREFIX_PATH "${OPENDDS_SOURCE_DIR}")
+-- 
+2.39.2
+

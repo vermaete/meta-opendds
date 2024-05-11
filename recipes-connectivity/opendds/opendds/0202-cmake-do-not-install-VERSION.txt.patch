@@ -1,0 +1,26 @@
+From 79d4f935b83b6739f064157f14fe9f7871e759b5 Mon Sep 17 00:00:00 2001
+From: Jan Vermaete <jan.vermaete@gmail.com>
+Date: Sat, 18 May 2024 21:20:12 +0200
+Subject: [PATCH 202/202] cmake: do not install VERSION.txt
+
+Signed-off-by: Jan Vermaete <jan.vermaete@gmail.com>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 89617da6f1..ba65de0df8 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -140,7 +140,7 @@ install(
+     "${config_cmake}"
+   DESTINATION "${cmake_dest}"
+ )
+-install(FILES VERSION.txt DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/dds/")
++#install(FILES VERSION.txt DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/dds/")
+ if(OPENDDS_RAPIDJSON)
+   install(DIRECTORY "${OPENDDS_RAPIDJSON}/include/rapidjson"
+     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+-- 
+2.39.2
+

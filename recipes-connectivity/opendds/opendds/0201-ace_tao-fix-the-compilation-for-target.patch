@@ -1,0 +1,50 @@
+From c7ad7ebfad360e2914fbcbf1044ce69a453efd5a Mon Sep 17 00:00:00 2001
+From: Jan Vermaete <jan.vermaete@gmail.com>
+Date: Sat, 18 May 2024 11:32:45 +0200
+Subject: [PATCH 201/201] ace_tao: fix the compilation for target
+
+Signed-off-by: Jan Vermaete <jan.vermaete@gmail.com>
+---
+ .../include/makeinclude/platform_g++_common.GNU  | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/ace_tao/include/makeinclude/platform_g++_common.GNU b/ace_tao/include/makeinclude/platform_g++_common.GNU
+index bed583c7f7..c0d653cba0 100644
+--- a/ace_tao/include/makeinclude/platform_g++_common.GNU
++++ b/ace_tao/include/makeinclude/platform_g++_common.GNU
+@@ -4,24 +4,24 @@ ifeq ($(insure),1)
+   CC  = insure
+   CXX = insure
+ else
+-  ifneq ($(CROSS_COMPILE),)
+-    CROSS-COMPILE = 1
++  #ifneq ($(CROSS_COMPILE),)
++    #CROSS-COMPILE = 1
+     # Build using the cross-tools
+-    CC  = ${CROSS_COMPILE}gcc${CROSS_COMPILE_SUFFIX}
+-    CXX = ${CROSS_COMPILE}g++${CROSS_COMPILE_SUFFIX}
+-    AR  = ${CROSS_COMPILE}ar${CROSS_COMPILE_SUFFIX}
++    #CC  = ${CROSS_COMPILE}gcc${CROSS_COMPILE_SUFFIX}
++    #CXX = ${CROSS_COMPILE}g++${CROSS_COMPILE_SUFFIX}
++    #AR  = ${CROSS_COMPILE}ar${CROSS_COMPILE_SUFFIX}
+     # Cross-linker requires this for linked in shared libs that depend
+     # themselves on other shared libs (not directly linked in)
+     LDFLAGS += -Wl,-rpath-link,$(ACE_ROOT)/lib
+-    ifneq (,$(HOST_ROOT))
++    #ifneq (,$(HOST_ROOT))
+       TAO_IDLFLAGS += -g $(HOST_ROOT)/bin/ace_gperf
+       TAO_IDL = $(HOST_ROOT)/bin/tao_idl
+       TAO_IDL_DEP = $(TAO_IDL)
+       # make sure to use the host compiler, not the cross-compiler
+       # as preprocessor for the cross-compiled idl tools
+       TAO_IDL_PREPROCESSOR = gcc
+-    endif
+-  endif
++    #endif
++  #endif
+ endif
+ 
+ ifneq ($(TCPU),)
+-- 
+2.39.2
+
