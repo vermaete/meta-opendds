@@ -5,6 +5,7 @@ DDS_SRC_BRANCH = "master"
 SRC_URI = "\
     git://github.com/OpenDDS/OpenDDS.git;protocol=https;branch=${DDS_SRC_BRANCH};name=opendds \
     ${DOC_TAO3_URI};name=ace_tao;striplevel=1;subdir=git/ace_tao \
+    file://0010-WIP-test-filter-tests-that-should-not-run-on-the-tar.patch \
     file://0200-yocto-do-not-enforce-this-for-yocto.patch \
     file://0202-cmake-do-not-install-VERSION.txt.patch \
 "
