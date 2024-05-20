@@ -1,8 +1,8 @@
 #!/bin/sh
 
 export DDS_ROOT=/usr/share/DDS_ROOT
-export ACE_ROOT=$DDS_ROOT/ACE_wrappers
-export TAO_ROOT=$DDS_ROOT/ACE_wrappers/TAO/
+export ACE_ROOT=$DDS_ROOT/ace_tao
+export TAO_ROOT=$DDS_ROOT/ace_tao/TAO/
 export PERLLIB="$PERLLIB:$DDS_ROOT/tools/scripts/modules"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$DDS_ROOT/lib"
 LOG_LONG="/tmp/opendds_ptest_$(date +%Y%m%d-%H%M%S).log"

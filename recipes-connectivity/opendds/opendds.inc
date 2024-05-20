@@ -7,9 +7,14 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=11ee76f6fb51f69658b5bb8327c50b11"
 
 inherit cmake ptest
 
+SRC_URI:append = " \
+    file://run-ptest \
+    ${@bb.utils.contains('PACKAGECONFIG', 'tests', 'file://0003-tests-added-dependencies-to-run-all-tests.patch', '', d)} \
+    "
+
 PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'ptest', 'tests', '', d)}"
 
-PACKAGECONFIG[tests] = ", , googletest, perl packagegroup-meta-perl perl-module-tie-array perl-module-english"
+PACKAGECONFIG[tests] = ", , googletest, "
 
 # This is needed to have the correct flags from Yocto and cmake in the
 # by MPC generated Makefiles for the ace_tao subproject.
@@ -30,6 +35,14 @@ EXTRA_OECMAKE:append:class-target = "\
 "
 EXTRA_OECMAKE:append:class-target = " ${@bb.utils.contains("DISTRO_FEATURES", "ptest", "-DOPENDDS_BUILD_TESTS=TRUE", "-DOPENDDS_BUILD_TESTS=FALSE", d)}"
 
+RDEPENDS:${PN}-ptest += "\
+    bash \
+    perl \
+    packagegroup-meta-perl \
+    perl-module-tie-array \
+    perl-module-english \
+"
+
 DEPENDS += "\
     opendds-native \
     perl-native \
@@ -47,6 +60,7 @@ do_install:append:class-native() {
 }
 
 do_install_ptest() {
+    sed -i "s#@PTEST_ARGS@#${@bb.utils.contains('PACKAGECONFIG', 'security', '--security', '', d)}#g" ${D}${PTEST_PATH}/run-ptest
     install -d ${D}${datadir}/DDS_ROOT/
     install -d ${D}${datadir}/DDS_ROOT/tests
     cd ${S}/tests
@@ -125,8 +139,37 @@ do_install_ptest() {
     install -m 644 ${S}/bin/PerlDDS/*.pm ${D}/usr/lib/perl5/5.38.2/PerlDDS
     install -d ${D}${datadir}/DDS_ROOT/tools/scripts/modules
     install -m 644 ${S}/tools/scripts/modules/*.pm ${D}${datadir}/DDS_ROOT/tools/scripts/modules
+
+    #@todo
+    install -d ${D}${datadir}/DDS_ROOT/tools/scripts/modules/tests
+    install -m 644 ${S}/tools/scripts/modules/tests/*.pl ${D}${datadir}/DDS_ROOT/tools/scripts/modules/tests
+
+    install -d ${D}${datadir}/DDS_ROOT/lib
+    cd ${S}/lib
+    tar --no-same-owner \
+        -cpf - . \
+        | tar --no-same-owner -xpf - -C ${D}${datadir}/DDS_ROOT/lib
+
+    install -d ${D}${datadir}/DDS_ROOT/ace_tao
+    cd ${S}/ace_tao
+    tar --no-same-owner \
+        --exclude='apps'\
+        --exclude='debian'\
+        -cpf - . \
+        | tar --no-same-owner -xpf - -C ${D}${datadir}/DDS_ROOT/ace_tao
+
 }
 
-FILES:${PN}-ptest += "${libdir}/perl5/5.38.2/PerlACE ${libdir}/perl5/5.38.2/PerlDDS"
+FILES:${PN}-ptest += " \
+    ${libdir}/perl5/5.38.2/PerlACE \
+    ${libdir}/perl5/5.38.2/PerlDDS \
+    ${datadir}/DDS_ROOT \
+"
+
+# Generated code from IDLs do have the full path of the IDL file in comment
+INSANE_SKIP:${PN}-dbg += "buildpaths"
+INSANE_SKIP:${PN}-dev += "buildpaths"
+INSANE_SKIP:${PN}-ptest += "buildpaths"
+INSANE_SKIP:${PN}-src += "buildpaths"
 
 BBCLASSEXTEND = "native nativesdk"
