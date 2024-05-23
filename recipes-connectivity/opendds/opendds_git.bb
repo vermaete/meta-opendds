@@ -3,7 +3,7 @@
 # In order to use this recipe, add the following to either local.conf
 # or an image recipe.
 #
-#  PREFERRED_VERSION:opendds="1.0+git%"
+#  PREFERRED_VERSION:pn-opendds="1.0+git%"
 #
 # It is not guaranteed to build. At any time the HEAD of master may not
 # be compatible with the general build instructions in opendds.inc.
