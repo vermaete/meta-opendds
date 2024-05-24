@@ -7,11 +7,16 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=11ee76f6fb51f69658b5bb8327c50b11"
 
 inherit autotools ptest
 
-SRC_URI:append = " file://run-ptest"
-
 SRC_URI:append = " \
+    git://github.com/objectcomputing/OpenDDS.git;protocol=https;branch=${DDS_SRC_BRANCH};name=opendds \
+    ${@bb.utils.contains('PACKAGECONFIG', 'doc-group3', '${DOC_TAO3_URI};name=ace_tao;unpack=0;subdir=git', '${DOC_TAO2_URI};name=ace_tao;unpack=0;subdir=git', d)} \
     ${@bb.utils.contains('PACKAGECONFIG', 'tests', 'file://0003-tests-added-dependencies-to-run-all-tests.patch', '', d)} \
+    ${@bb.utils.contains('PACKAGECONFIG', 'ishapes', 'file://0001-adding-the-ishapes-demo.patch', '', d)} \
+    file://0010-WIP-test-filter-tests-that-should-not-run-on-the-tar.patch \
+    file://run-ptest \
     "
+
+SRC_URI[ace_tao.sha256sum] = "${@bb.utils.contains('PACKAGECONFIG', 'doc-group3', '${DOC_TAO3_SHA256SUM}', '${DOC_TAO2_SHA256SUM}', d)}"
 
 PACKAGECONFIG ??= "security ${@bb.utils.contains('DISTRO_FEATURES', 'ptest', 'tests', '', d)}"
 PACKAGECONFIG:class-native ??= ""
