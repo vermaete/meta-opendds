@@ -7,3 +7,6 @@ local_conf_header:
         PACKAGECONFIG:append:pn-opendds = " doc-group3"
         PACKAGECONFIG:append:pn-opendds-native = " doc-group3"
         INHERIT += "cve-check"
+        # uncomment when building the latest status of the git repo
+        #PREFERRED_VERSION:pn-opendds="1.0+git%"
+        #PREFERRED_VERSION:pn-opendds-native="1.0+git%"
