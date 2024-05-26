@@ -7,6 +7,12 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=11ee76f6fb51f69658b5bb8327c50b11"
 
 inherit autotools ptest
 
+DEPENDS += "\
+    cmake-native \
+    opendds-native \
+    perl-native \
+"
+
 SRC_URI:append = " \
     git://github.com/objectcomputing/OpenDDS.git;protocol=https;branch=${DDS_SRC_BRANCH};name=opendds \
     ${@bb.utils.contains('PACKAGECONFIG', 'doc-group3', '${DOC_TAO3_URI};name=ace_tao;unpack=0;subdir=git', '${DOC_TAO2_URI};name=ace_tao;unpack=0;subdir=git', d)} \
@@ -18,6 +24,8 @@ SRC_URI:append = " \
 
 SRC_URI[ace_tao.sha256sum] = "${@bb.utils.contains('PACKAGECONFIG', 'doc-group3', '${DOC_TAO3_SHA256SUM}', '${DOC_TAO2_SHA256SUM}', d)}"
 
+S = "${WORKDIR}/git"
+
 PACKAGECONFIG ??= "security ${@bb.utils.contains('DISTRO_FEATURES', 'ptest', 'tests', '', d)}"
 PACKAGECONFIG:class-native ??= ""
 PACKAGECONFIG[security] = "--security, , openssl xerces-c, "
@@ -25,20 +33,12 @@ PACKAGECONFIG[ishapes] = "--qt=${STAGING_DIR_NATIVE}${prefix_native} --qt-includ
 PACKAGECONFIG[doc-group3] = "--doc-group3,,"
 PACKAGECONFIG[tests] = "--tests --gtest=${WORKDIR}/recipe-sysroot/usr, --no-tests, googletest, perl packagegroup-meta-perl perl-module-tie-array perl-module-english, ,ishapes"
 
-DEPENDS += "\
-    cmake-native \
-    opendds-native \
-    perl-native \
-"
-
 RDEPENDS:${PN}-dev += "\
     bash \
     coreutils \
     make \
     perl \
 "
-
-S = "${WORKDIR}/git"
 
 # Set the build directory to be the source directory
 B = "${S}"
@@ -136,9 +136,7 @@ do_install:append:class-native() {
     rm ${D}${datadir}/dds/bin/opendds_idl
     rm ${D}${datadir}/ace/bin/ace_gperf
     rm ${D}${datadir}/ace/bin/tao_idl
-}
 
-do_install:append:class-native() {
     # Prepare HOST_ROOT expected by DDS for target build
     mkdir -p ${D}${bindir}/DDS_HOST_ROOT/ACE_wrappers/bin
     mkdir -p ${D}${bindir}/DDS_HOST_ROOT/bin
