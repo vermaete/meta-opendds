@@ -87,11 +87,17 @@ OECONF:append:class-nativesdk = "\
     --host-tools-only \
 "
 
-SOLIBS = ".so*"
-FILES_SOLIBSDEV = ""
+#SOLIBS = ".so*"
+#FILES_SOLIBSDEV = ""
 
 do_configure() {
     ./configure ${OECONF}
+}
+
+
+do_install:prepend:class-target() {
+    # remove all *.so* from the to be made -dev, -dbg, ... packages
+    find ${DDS_ROOT} -name *.so.* -exec rm -rf {} \;
 }
 
 do_install:append:class-target() {
@@ -236,10 +242,11 @@ do_install_ptest() {
 
 PACKAGES += "${PN}-ishapes"
 
-INSANE_SKIP:${PN} += "dev-so"
+#INSANE_SKIP:${PN} += "dev-so"
 INSANE_SKIP:${PN}-dev += "libdir"
+INSANE_SKIP:${PN}-dbg += "libdir"
 
-FILES:${PN}-dev += "${datadir}"
+FILES:${PN}-dev += "${datadir}/dds ${datadir}/ace ${datadir}/tao ${datadir}/DDS_ROOT"
 FILES:${PN}-ishapes += "${bindir}/ishapes"
 FILES:${PN}-ptest += "${libdir}/perl5/5.38.2/PerlACE ${libdir}/perl5/5.38.2/PerlDDS"
 
