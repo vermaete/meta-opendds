@@ -9,9 +9,9 @@ DOC_TAO4_URI = "https://github.com/DOCGroup/ACE_TAO/releases/download/ACE+TAO-${
 DDS_SRC_BRANCH = "branch-DDS-3.29"
 SRC_URI = "\
     git://github.com/OpenDDS/OpenDDS.git;protocol=https;branch=${DDS_SRC_BRANCH};name=opendds \
-    ${@bb.utils.contains('PACKAGECONFIG', 'doc-group2', '${DOC_TAO2_URI};name=ace_tao2;unpack=0;subdir=git', '' ,d)} \
-    ${@bb.utils.contains('PACKAGECONFIG', 'doc-group3', '${DOC_TAO3_URI};name=ace_tao3;unpack=0;subdir=git', '' ,d)} \
-    ${@bb.utils.contains('PACKAGECONFIG', 'doc-group4', '${DOC_TAO4_URI};name=ace_tao4;unpack=0;subdir=git', '' ,d)} \
+    ${@bb.utils.contains('PACKAGECONFIG', 'doc-group2', '${DOC_TAO2_URI};name=ace_tao2;unpack=1;subdir=git', '' ,d)} \
+    ${@bb.utils.contains('PACKAGECONFIG', 'doc-group3', '${DOC_TAO3_URI};name=ace_tao3;unpack=1;subdir=git', '' ,d)} \
+    ${@bb.utils.contains('PACKAGECONFIG', 'doc-group4', '${DOC_TAO4_URI};name=ace_tao4;unpack=1;subdir=git', '' ,d)} \
     ${@bb.utils.contains('PACKAGECONFIG', 'ishapes', 'file://0001-adding-the-ishapes-demo.patch', '', d)} \
     file://0010-WIP-test-filter-tests-that-should-not-run-on-the-tar.patch \
 "
