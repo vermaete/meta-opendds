@@ -7,8 +7,6 @@ LIC_FILES_CHKSUM = "file://README.md;md5=3c38eddba8f9be09c2acc10026ca0ee1"
 DEPENDS = "\
     opendds \
     opendds-native \
-    openssl \
-    openssl-native \
 "
 
 DDS_SRC_BRANCH = "branch-DDS-3.29"
@@ -21,18 +19,17 @@ SRCREV = "53414662d60f5e222aad9ca4383da0d856a577df"
 
 S = "${WORKDIR}/Messenger"
 
-inherit cmake pkgconfig
+inherit cmake
 
 EXTRA_OECMAKE += "\
     -DCMAKE_PREFIX_PATH=${WORKDIR}/recipe-sysroot/usr/ \
-    -DOPENDDS_OPENDSSL=${STAGING_EXECPREFIXDIR} \
 "
 
 do_install() {
     install -d ${D}${bindir}/${BPN}
     install -m 0755 publisher ${D}${bindir}/${BPN}
     install -m 0755 subscriber ${D}${bindir}/${BPN}
-    install -m 0755 rtps.ini ${D}${bindir}/${BPN}
+    install -m 0644 rtps.ini ${D}${bindir}/${BPN}
 }
 
 RDEPENDS:${PN} += "opendds"
