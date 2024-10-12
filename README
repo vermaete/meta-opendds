@@ -6,10 +6,10 @@ Dependencies
 ============
 
   URI: git://git.openembedded.org/meta-openembedded
-  branch: scarthgap
+  branch: styhead
 
   URI:  https://git.yoctoproject.org/git/poky/meta
-  branch: scarthgap
+  branch: styhead
 
 Patches
 =======
