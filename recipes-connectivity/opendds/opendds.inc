@@ -123,6 +123,10 @@ do_install:append:class-target() {
     cp -r ${DDS_ROOT}/ACE_wrappers/lib ${D}${datadir}/DDS_ROOT/ACE_wrappers
     cp ${DDS_ROOT}/ACE_wrappers/*.txt ${D}${datadir}/DDS_ROOT/ACE_wrappers
 
+    # remove all so files from DDS_ROOT to avoid packing them twice
+    # one in the opendds package and one in the opendds-dev package
+    find ${D}${datadir} -name '*\.so*' -exec rm -rf {} \;
+
     if [ "${@bb.utils.contains("PACKAGECONFIG", "ishapes", "1", "0", d)}" = "1" ]; then
         install -d ${D}${bindir}
         install -m 0755 ${S}/examples/DCPS/ishapes/ishapes ${D}${bindir}/
