@@ -1,0 +1,6 @@
+header:
+    version: 1
+
+local_conf_header:
+    opendds-example: |
+        IMAGE_INSTALL:append = " opendds-example"
