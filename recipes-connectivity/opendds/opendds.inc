@@ -13,7 +13,7 @@ SRC_URI:append = " \
     ${@bb.utils.contains('PACKAGECONFIG', 'tests', 'file://0003-tests-added-dependencies-to-run-all-tests.patch', '', d)} \
     "
 
-PACKAGECONFIG ??= "doc-group2 security ${@bb.utils.contains('DISTRO_FEATURES', 'ptest', 'tests', '', d)}"
+PACKAGECONFIG ??= "doc-group2 ${@bb.utils.contains('DISTRO_FEATURES', 'ptest', 'tests', '', d)}"
 PACKAGECONFIG:class-native ??= "doc-group2"
 PACKAGECONFIG[security] = "--security, , openssl xerces-c, "
 PACKAGECONFIG[ishapes] = "--qt=${STAGING_DIR_NATIVE}${prefix_native} --qt-include=${STAGING_INCDIR},,qtbase qtbase-native"
