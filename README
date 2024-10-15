@@ -6,10 +6,10 @@ Dependencies
 ============
 
   URI: git://git.openembedded.org/meta-openembedded
-  branch: scarthgap
+  branch: styhead
 
   URI:  https://git.yoctoproject.org/git/poky/meta
-  branch: scarthgap
+  branch: styhead
 
 Patches
 =======
@@ -37,7 +37,7 @@ II. Misc
 
 The layer contains two recipes for OpenDDS: one versioned and one not.
 
-If PREFERRED_VERSION is not specifed in your local.conf then the OpenDDS 3.29.1 recipe will be
+If PREFERRED_VERSION is not specifed in your local.conf then the OpenDDS 3.30.0 recipe will be
 selected for build by default
 
 The versioned recipe will use the DOC Group ACE/TAO v2 by default.
@@ -71,3 +71,7 @@ Note that simply providing a different branch and SRCREV may be insufficient.
 If your desired commit is significantly newer than that used for the versioned
 recipe, then the generic build instructions may be insufficient or incorrect.
 
+Note that the _git version of the recipe uses AUTOREV, which requires a network
+connection.  This will not work in environments without network access.((e.g. air-gapped networks).
+To resolve this, the the folloging line to your local.conf file.
+BBMASK += 'meta-opendds/recipes-connectivity/opendds/opendds_git.bb'
